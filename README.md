@@ -45,9 +45,9 @@ The Fusion design **Waveshare P4 bracket v11** places the ESP32-P4 behind the pa
 
 ## 4. Load ESPHome
 
-Start with the [complete bring-up project](firmware/esphome-bringup.zip), which draws a test card and logs touch coordinates. The [firmware guide](firmware/README.md) covers flashing, first boot checks, and the files needed by the full dashboard.
+Start with [p4-88-bringup.yaml](firmware/p4-88-bringup.yaml), which draws a test card and logs touch coordinates. The [MIPI DSI component source](firmware/waveshare_pr_components/mipi_dsi) is included beside the YAML. The [firmware guide](firmware/README.md) covers flashing, first boot checks, and the files needed by the full dashboard.
 
-The deployed configuration is available as [`waveshare-p4-db-88-test.yaml`](firmware/waveshare-p4-db-88-test.yaml), with site-specific Home Assistant entities replaced by examples. This excerpt shows how the DSI panel and touch controller fit together:
+The public dashboard configuration is available as [`waveshare-p4-db-88-test.yaml`](firmware/waveshare-p4-db-88-test.yaml), with site-specific Home Assistant entities replaced by examples. This excerpt shows how the DSI panel and touch controller fit together:
 
 ```yaml
 i2c:
