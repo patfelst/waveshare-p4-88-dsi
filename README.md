@@ -1,6 +1,6 @@
 # Waveshare 8.8″ MIPI DSI display with ESP32-P4
 
-Build a slim touchscreen using the Waveshare **ESP32-P4-WIFI6-DB**, the **8.8-DSI-TOUCH-A** LCD, and a 3D printed bracket that mounts the controller behind the display. A ribbon carries the picture and touch/control signals; a separate lead powers the LCD. Start with the ESPHome test card, then use the landscape dashboard source as a reference for your own interface.
+Build a slim touchscreen using the Waveshare **ESP32-P4-WIFI6-DB**, the **8.8-DSI-TOUCH-A** LCD, and a 3D printed bracket that mounts the controller behind the display. A ribbon carries the picture and touch/control signals; a separate lead powers the LCD. The ESPHome bring-up configuration displays a landscape LVGL colour pattern and an interactive touch-test button.
 
 **8.8″ IPS touchscreen · 480 × 1920 native · 1920 × 480 landscape · Two-lane MIPI DSI**
 
@@ -45,42 +45,15 @@ The Fusion design **Waveshare P4 bracket v11** places the ESP32-P4 behind the pa
 
 ## 4. Load ESPHome
 
-Start with [p4-88-bringup.yaml](firmware/p4-88-bringup.yaml), which draws a test card and logs touch coordinates. The [MIPI DSI component source](firmware/waveshare_pr_components/mipi_dsi) is included beside the YAML. The [firmware guide](firmware/README.md) covers flashing, first boot checks, and the files needed by the full dashboard.
+Start with [p4-88-bringup.yaml](firmware/p4-88-bringup.yaml), which draws an LVGL colour pattern and tests touch. The [MIPI DSI component source](firmware/waveshare_pr_components/mipi_dsi) is included beside the YAML. The [firmware guide](firmware/README.md) covers flashing, first boot checks, and the required source files.
 
-The public dashboard configuration is available as [`waveshare-p4-db-88-test.yaml`](firmware/waveshare-p4-db-88-test.yaml), with site-specific Home Assistant entities replaced by examples. This excerpt shows how the DSI panel and touch controller fit together:
-
-```yaml
-i2c:
-  id: board_i2c
-  sda: GPIO7
-  scl: GPIO8
-  frequency: 100kHz
-  scan: true
-
-i2c_device:
-  id: panel_control
-  i2c_id: board_i2c
-  address: 0x45
-
-display:
-  - platform: mipi_dsi
-    id: lcd
-    model: WAVESHARE-8.8-DSI-TOUCH-A
-    update_interval: never
-    auto_clear_enabled: false
-
-touchscreen:
-  - platform: gt911
-    id: touch
-    display: lcd
-    i2c_id: board_i2c
-    address: 0x5D
-    update_interval: 20ms
-```
-
-The full file adds the startup power sequence, local panel driver, backlight output and landscape LVGL layout. The LCD is natively portrait; the dashboard rotates both drawing and touch coordinates for landscape.
+The bring-up YAML contains the panel startup sequence, backlight control, landscape rotation, seven colour bars and a button that displays **Touch OK** when tapped. It uses LVGL's built-in font.
 
 **First boot checks:** If the backlight is dark, check 5 V/GND and whether `0x45` responds. If the backlight is on but there is no picture, check the DSI latch and confirm the firmware is using the supplied 8.8-inch model. If the picture works but touch does not, check the I²C scan and the Goodix address before changing rotation.
+
+### Why the custom component is included
+
+The custom component backports support for the 8.8-inch OTA7290B panel to ESPHome 2026.9.0. It supplies the panel’s timings and initialization commands, honours its requirement to skip software reset, and retains the D-PHY clock fix used by the production ESP32-P4 board. The project’s hardware testing found that issuing software reset left the backlight on without a picture. Keep the included component beside the YAML so ESPHome loads this tested driver.
 
 ## 5. Screen photos
 
