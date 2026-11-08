@@ -158,8 +158,7 @@ display:
     vsync_pulse_width: 20
     vsync_back_porch: 20
     vsync_front_porch: 20
-    update_interval: 2s
-    show_test_card: true
+    update_interval: never
     auto_clear_enabled: false
     # Initialization commands and required delays come from the named model.
 
@@ -170,7 +169,7 @@ touchscreen:
     i2c_id: board_i2c
     address: 0x5D # Check I2C scan; some Goodix configurations use 0x14.
     update_interval: 20ms
-    # No RST/INT GPIOs are wired. Log native coordinates without LVGL.
+    # Log touch coordinates while LVGL handles the test button.
     on_touch:
       - lambda: |-
           ESP_LOGI("touch_test", "native=(%d,%d) raw=(%d,%d)",
@@ -180,10 +179,99 @@ touchscreen:
     on_release:
       - logger.log: "Touch released"
 
-# Standalone renderer test: no LVGL, animation, or software rotation.
-interval:
-  - interval: 10s
-    then:
-      - lambda: |-
-          ESP_LOGI("display_test", "WAVESHARE-CLEAN-1 test card; display_failed=%s; uptime=%lu s",
-                   id(lcd).is_failed() ? "YES" : "NO", (unsigned long)(millis() / 1000));
+# Landscape LVGL test pattern with a touch-response button.
+lvgl:
+  rotation: 90
+  draw_rounding: 32
+  pad_all: 0
+  border_width: 0
+  scrollable: false
+  displays: [lcd]
+  touchscreens: [touch]
+  color_depth: 16
+  buffer_size: 25%
+  default_font: montserrat_24
+  pages:
+    - id: test_page
+      bg_color: 0x101A2A
+      widgets:
+        - label:
+            text: "Waveshare 8.8-inch | LVGL display test"
+            x: 40
+            y: 30
+            text_color: 0xFFFFFF
+        - label:
+            text: "1920 x 480 | RGB bars | Touch the button below"
+            x: 40
+            y: 75
+            text_color: 0xC0D0E0
+        - obj:
+            x: 40
+            y: 130
+            width: 263
+            height: 200
+            bg_color: 0xFF0000
+            border_width: 0
+            radius: 0
+        - obj:
+            x: 303
+            y: 130
+            width: 263
+            height: 200
+            bg_color: 0x00FF00
+            border_width: 0
+            radius: 0
+        - obj:
+            x: 566
+            y: 130
+            width: 263
+            height: 200
+            bg_color: 0x0000FF
+            border_width: 0
+            radius: 0
+        - obj:
+            x: 829
+            y: 130
+            width: 263
+            height: 200
+            bg_color: 0x00FFFF
+            border_width: 0
+            radius: 0
+        - obj:
+            x: 1092
+            y: 130
+            width: 263
+            height: 200
+            bg_color: 0xFF00FF
+            border_width: 0
+            radius: 0
+        - obj:
+            x: 1355
+            y: 130
+            width: 263
+            height: 200
+            bg_color: 0xFFFF00
+            border_width: 0
+            radius: 0
+        - obj:
+            x: 1618
+            y: 130
+            width: 263
+            height: 200
+            bg_color: 0xFFFFFF
+            border_width: 0
+            radius: 0
+        - button:
+            x: 40
+            y: 370
+            width: 420
+            height: 70
+            widgets:
+              - label:
+                  id: touch_result
+                  text: "Tap to test touch"
+                  align: CENTER
+            on_click:
+              - lvgl.label.update:
+                  id: touch_result
+                  text: "Touch OK"
