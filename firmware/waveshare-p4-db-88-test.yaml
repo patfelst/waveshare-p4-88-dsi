@@ -1,4 +1,4 @@
-# Publication copy of /config/esphome/waveshare-p4-db-88-test.yaml.
+# Adapted from /config/esphome/waveshare-p4-db-88-test.yaml.
 # Home Assistant entity names use examples. See README for dependencies.
 # For initial hardware verification, start with p4-88-bringup.yaml.
 # Waveshare ESP32-P4-WIFI6-DB + 8.8-DSI-TOUCH-A rack monitor.
@@ -78,9 +78,7 @@ esphome:
             lv_label_set_text_fmt(id(status_radio), "ESP32-C5-MINI-1U | ESP-Hosted %s / SDIO",
                                   version.empty() ? "unknown" : version.c_str());
         - lvgl.page.show: rack_page
-        - script.execute:
-            id: startup_splash
-            show_info: false
+        - script.execute: startup_splash
 
 # Clean local backport of the upstream PR candidate. Only mipi_dsi is replaced.
 # The named WAVESHARE-8.8-DSI-TOUCH-A model skips software reset, while retaining
@@ -359,12 +357,9 @@ script:
             lv_label_set_text(id(rack_clock_label), time_text.c_str());
 
   - id: startup_splash
-    # Animate the logo, rack title and Schroff credit, then reveal Rack or Rack info.
-    # After the boot splash, run and await the Rack display test; the Rack info splash skips it.
+    # Animate the boot splash, then run the Rack display test.
     # Keep the display awake through both sequences and restart the vacancy timer afterwards.
     mode: single
-    parameters:
-      show_info: bool
     then:
     - script.stop: study_screensaver_timer
     - if:
@@ -409,15 +404,6 @@ script:
         start_wipe(id(splash_credit_curtain), 1680, 3042,  731);
     # Preserve about 2.83 s of fully revealed text before fading; this wait yields.
     - delay: 5378ms
-    - if:
-        condition:
-          lambda: !lambda |-
-            return show_info;
-        then:
-        - lvgl.page.show:
-            id: rack_info_page
-            animation: FADE_IN
-            time: 350ms
     - lambda: !lambda |-
         lv_anim_t fade;
         lv_anim_init(&fade);
@@ -430,14 +416,9 @@ script:
         lv_anim_start(&fade);
     - delay: 625ms
     - lvgl.widget.hide: startup_splash_overlay
-    - if:
-        condition:
-          lambda: !lambda |-
-            return !show_info;
-        then:
-        - lvgl.page.show: rack_page
-        - script.execute: rack_display_test
-        - script.wait: rack_display_test
+    - lvgl.page.show: rack_page
+    - script.execute: rack_display_test
+    - script.wait: rack_display_test
     - script.execute: study_screensaver_timer
     - logger.log:
         tag: startup_splash
@@ -842,13 +823,6 @@ font:
 
 # Native-resolution faceplate; labels and chart remain live LVGL widgets.
 image:
-  - platform: file
-    # Local copy of the same official artwork, embedded in firmware.
-    file: "patrack-assets/nvent-schroff-logo.svg"
-    id: nvent_schroff_logo
-    type: RGB565
-    transparency: alpha_channel
-    resize: 240x76
   - platform: file
     file: patrack-assets/dedicated-systems-logo.png
     id: dedicated_systems_logo
@@ -1446,7 +1420,7 @@ lvgl:
         id: rack_extrema_note
         gesture_bubble: true
     - button: &rack_nav_button
-        x: 790
+        x: 848
         y: 26
         width: 108
         height: 38
@@ -1466,31 +1440,8 @@ lvgl:
             gesture_bubble: true
         on_click:
         - lvgl.page.show: rack_page
-    - button: &rack_info_nav_button
-        x: 906
-        y: 26
-        width: 108
-        height: 38
-        radius: 12
-        pad_all: 0
-        scrollable: false
-        gesture_bubble: true
-        bg_color: ${color_pale_blue}
-        widgets:
-        - label:
-            text: Rack info
-            x: 0
-            y: 0
-            text_font: montserrat_18
-            text_color: ${color_lcd_ink}
-            align: CENTER
-            gesture_bubble: true
-        on_click:
-        - script.execute:
-            id: startup_splash
-            show_info: true
     - button: &status_nav_button
-        x: 1022
+        x: 964
         y: 26
         width: 108
         height: 38
@@ -1527,147 +1478,6 @@ lvgl:
     - logger.log:
         tag: ui_nav
         format: 'Page: rack_page'
-  - id: rack_info_page
-    bg_color: ${color_splash_background}
-    widgets:
-    - label:
-        text: PatRACK 19" rack
-        x: 24
-        y: 16
-        text_font: montserrat_40
-        text_color: ${color_splash_text}
-        gesture_bubble: true
-    - label:
-        text: nVent SCHROFF hardware
-        x: 26
-        y: 70
-        text_font: montserrat_22
-        text_color: 0x83CDE3
-        gesture_bubble: true
-    - obj:
-        x: 52
-        y: 128
-        width: 7
-        height: 286
-        border_width: 0
-        bg_color: ${color_cyan}
-        radius: 3
-        pad_all: 0
-        scrollable: false
-        gesture_bubble: true
-    - obj:
-        x: 96
-        y: 157
-        width: 12
-        height: 12
-        radius: 6
-        bg_color: ${color_cyan}
-        border_width: 0
-        pad_all: 0
-        scrollable: false
-        gesture_bubble: true
-    - label:
-        text: 33RU Varistar rack
-        x: 134
-        y: 142
-        text_font: montserrat_36
-        text_color: ${color_splash_text}
-        gesture_bubble: true
-    - obj:
-        x: 96
-        y: 223
-        width: 12
-        height: 12
-        radius: 6
-        bg_color: ${color_cyan}
-        border_width: 0
-        pad_all: 0
-        scrollable: false
-        gesture_bubble: true
-    - label:
-        text: 600W x 800D mm
-        x: 134
-        y: 208
-        text_font: montserrat_36
-        text_color: ${color_splash_text}
-        gesture_bubble: true
-    - obj:
-        x: 96
-        y: 289
-        width: 12
-        height: 12
-        radius: 6
-        bg_color: ${color_cyan}
-        border_width: 0
-        pad_all: 0
-        scrollable: false
-        gesture_bubble: true
-    - label:
-        text: Custom logo
-        x: 134
-        y: 274
-        text_font: montserrat_36
-        text_color: ${color_splash_text}
-        gesture_bubble: true
-    - obj:
-        x: 96
-        y: 355
-        width: 12
-        height: 12
-        radius: 6
-        bg_color: ${color_cyan}
-        border_width: 0
-        pad_all: 0
-        scrollable: false
-        gesture_bubble: true
-    - label:
-        text: Roller castors
-        x: 134
-        y: 340
-        text_font: montserrat_36
-        text_color: ${color_splash_text}
-        gesture_bubble: true
-    - button:
-        <<: *rack_nav_button
-        bg_color: ${color_pale_blue}
-    - button:
-        <<: *rack_info_nav_button
-        bg_color: ${color_nav_active}
-    - button:
-        <<: *status_nav_button
-        bg_color: ${color_pale_blue}
-    - obj:
-        x: 1640
-        y: 8
-        width: 256
-        height: 88
-        bg_color: ${color_white}
-        border_width: 0
-        radius: 10
-        pad_all: 0
-        scrollable: false
-        clickable: false
-        gesture_bubble: true
-        widgets:
-        - image:
-            src: nvent_schroff_logo
-            align: CENTER
-            gesture_bubble: true
-    clickable: true
-    on_swipe_left:
-    - lambda: !lambda |-
-        lv_indev_wait_release(lv_indev_active());
-    - lvgl.page.next:
-        animation: NONE
-    on_swipe_right:
-    - lambda: !lambda |-
-        lv_indev_wait_release(lv_indev_active());
-    - lvgl.page.previous:
-        animation: NONE
-    on_load:
-    - logger.log:
-        tag: ui_nav
-        format: 'Page: rack_info_page'
   - id: status_page
     widgets:
     - label:
@@ -2103,9 +1913,6 @@ lvgl:
         gesture_bubble: true
     - button:
         <<: *rack_nav_button
-        bg_color: ${color_pale_blue}
-    - button:
-        <<: *rack_info_nav_button
         bg_color: ${color_pale_blue}
     - button:
         <<: *status_nav_button
