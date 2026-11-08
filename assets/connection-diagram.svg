@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="580" viewBox="0 0 1200 580" role="img" aria-labelledby="title desc">
+  <title id="title">Connecting the Waveshare 8.8-inch display to the ESP32-P4</title>
+  <desc id="desc">A 22-contact ribbon carries two-lane MIPI DSI and the I2C bus. A separate two-wire lead carries 5 volts and ground.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#101a2a"/><stop offset="1" stop-color="#192942"/></linearGradient>
+    <marker id="blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse"><path d="M1 1l8 4-8 4z" fill="#71cfff"/></marker>
+    <marker id="violet" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse"><path d="M1 1l8 4-8 4z" fill="#c6a5ff"/></marker>
+    <marker id="gold" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse"><path d="M1 1l8 4-8 4z" fill="#ffca79"/></marker>
+  </defs>
+  <rect width="1200" height="580" rx="22" fill="url(#bg)"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="52" y="51" font-size="16" font-weight="700" letter-spacing="3" fill="#91a8c3">WAVESHARE P4  /  HARDWARE CONNECTIONS</text>
+    <text x="52" y="101" font-size="37" font-weight="700" fill="#fff">Two cables connect the board and display</text>
+    <rect x="52" y="150" width="320" height="351" rx="16" fill="#202f47" stroke="#455875" stroke-width="2"/>
+    <rect x="828" y="150" width="320" height="351" rx="16" fill="#202f47" stroke="#455875" stroke-width="2"/>
+    <g fill="#a9bdd5" font-size="14" font-weight="700" letter-spacing="2">
+      <text x="76" y="184">CONTROLLER</text><text x="852" y="184">TOUCH DISPLAY</text>
+    </g>
+    <g fill="#fff" font-size="24" font-weight="700">
+      <text x="76" y="220">ESP32-P4-WIFI6-DB</text><text x="852" y="220">8.8-DSI-TOUCH-A</text>
+    </g>
+    <g stroke="#455875" fill="none"><path d="M76 237H348M852 237h272M76 385h272M852 385h272"/></g>
+    <g fill="#eaf2fc" font-size="20" font-weight="700">
+      <text x="76" y="283">MIPI DSI connector</text><text x="852" y="283">22-pin DSI connector</text>
+      <text x="76" y="339">Shared I²C bus</text><text x="852" y="339">Goodix touch + backlight</text>
+      <text x="76" y="438">5 V and GND</text><text x="852" y="438">LCD power input</text>
+    </g>
+    <g fill="#acbfd6" font-size="17">
+      <text x="76" y="367">GPIO7 SDA  ·  GPIO8 SCL</text><text x="852" y="367">0x5D touch  ·  0x45 control</text>
+      <text x="76" y="466">4-pin USB header · power only</text><text x="852" y="466">2-pin connector  ·  5 V DC</text>
+    </g>
+    <rect x="398" y="203" width="404" height="175" rx="13" fill="#152136" stroke="#4a6385" stroke-width="2"/>
+    <text x="600" y="231" text-anchor="middle" fill="#d6e4f4" font-size="16" font-weight="700">22-pin, 200 mm ribbon · opposite-side contacts</text>
+    <path d="M373 281h449" stroke="#71cfff" stroke-width="3.5" marker-end="url(#blue)"/>
+    <text x="600" y="268" text-anchor="middle" fill="#71cfff" font-size="18" font-weight="700">MIPI DSI  ·  two data lanes + clock</text>
+    <path d="M381 337h438" stroke="#c6a5ff" stroke-width="3.5" marker-start="url(#violet)" marker-end="url(#violet)"/>
+    <text x="600" y="325" text-anchor="middle" fill="#c6a5ff" font-size="18" font-weight="700">I²C  ·  touch and panel control</text>
+    <path d="M373 437h449" stroke="#ffca79" stroke-width="3.5" marker-end="url(#gold)"/>
+    <text x="600" y="424" text-anchor="middle" fill="#ffca79" font-size="18" font-weight="700">Separate 150 mm 5 V / GND lead</text>
+    <text x="600" y="465" text-anchor="middle" fill="#acbfd6" font-size="17">Check polarity at both ends</text>
+    <text x="52" y="548" fill="#acbfd6" font-size="17">Functional block diagram · Disconnect power before seating the ribbon or power lead.</text>
+  </g>
+</svg>
